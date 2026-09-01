@@ -21,6 +21,9 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
 .source-state{font-size:11px;padding:7px 9px;border-radius:9px;border:1px solid var(--line);background:#0d1727;color:var(--muted)}.source-state.safe{border-color:#3f8b73;color:#b9f4cf}.source-state.dirty{border-color:#9b7840;color:#ffe1a6}.tempo-editor{min-height:78px!important;resize:vertical}.compact-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tiny{font-size:10px;color:var(--muted)}.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:999px;border:1px solid var(--line);background:#0d1727;font-size:10px;color:#cfe4f6}.preset-row{display:grid;grid-template-columns:1fr;gap:6px}.feature-note{border:1px solid #31506d;background:#0b1a2a;border-radius:10px;padding:8px 9px;font-size:11px;line-height:1.5;color:#bdd2e6}.export-inline{display:grid;gap:9px;margin-top:4px;padding-top:12px;border-top:1px solid var(--line)}.export-inline-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.export-inline-head b{font-size:13px}.copygrid{display:grid;grid-template-columns:1fr;gap:9px}.copytrack{display:grid;gap:7px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#0d1727}.copytrack .meta{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.copytrack .name{font-size:12px;font-weight:700;color:#eaf5ff}.copytrack .count{font-size:10px;color:var(--muted);margin-top:2px}.copytrack textarea{min-height:92px;resize:vertical;padding:9px;font-size:11px;line-height:1.4}.copytrack .btn{width:100%;padding:7px 9px}.advanced-output{border:1px solid var(--line);border-radius:10px;background:#0d1727;padding:8px 10px}.advanced-output summary{cursor:pointer;color:#cfe4f6;font-size:11px;font-weight:700}.advanced-output[open]{display:grid;gap:9px}.export-actions{align-items:stretch}.export-actions>*{flex:1}.settings-group>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 13px;cursor:pointer;list-style:none;background:rgba(23,36,58,.72)}.settings-group>summary::-webkit-details-marker{display:none}.settings-group>summary>span:first-child{display:flex;align-items:center;gap:8px;min-width:0}.settings-group>summary b{font-size:14px}.settings-toggle{width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:0 4px 4px 0;transition:.2s}.settings-group[open] .settings-toggle{transform:rotate(225deg);margin-top:4px;margin-bottom:0}.settings-group-body{display:grid}.settings-subsection{padding:12px;border-top:1px solid var(--line)}.settings-subsection:first-child{border-top:0}.settings-subhead{display:flex;align-items:center;justify-content:space-between;gap:8px}.settings-subhead h3{font-size:13px;margin:0}.settings-subsection .body{padding:10px 0 0}.timeline-scroll{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;padding:8px 10px;border-top:1px solid var(--line);background:#0e1726}.mobile-nav{display:none}.song-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}.song-card h3{margin:0 0 6px;font-size:16px}.song-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.65}.song-card a{color:#9fd6ff}
 @media(max-width:1180px){.grid{grid-template-columns:320px 1fr}.rightcol{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px}.guidegrid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:780px){.app{padding:8px 8px 92px}.topbar{position:relative;align-items:flex-start;flex-direction:column}.brand{min-width:0}.brand h1{font-size:16px}.grid{grid-template-columns:1fr;margin-top:8px}.mobile-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;position:sticky;top:6px;z-index:19;margin-top:8px;padding:6px;border:1px solid var(--line);border-radius:13px;background:rgba(11,18,32,.94)}.mobile-nav .active{border-color:var(--accent);background:#193c31}.grid>.leftcol,.grid>.centerpanel,.grid>.rightcol{display:none}.grid.view-score>.leftcol{display:grid}.grid.view-roll>.centerpanel{display:block;min-height:auto}.grid.view-settings>.rightcol{display:block}.rightcol .panel{margin-top:12px}.rightcol .panel:first-child{margin-top:0}.rollwrap{height:480px}.guidegrid{grid-template-columns:1fr}.transport{gap:6px}.transport .hide-sm{display:none}.toolbar{width:100%}.toolbar .control{flex:1}.toolbar .btn{flex:1}.importbox{grid-template-columns:1fr}.song-card{grid-template-columns:1fr}.song-card .btn{width:100%}.timeline-scroll{grid-template-columns:1fr}.timeline-scroll .tiny{display:none}}
+/* Mutopia 公版歌曲庫 */
+.library-panel{margin-top:12px}.library-intro{color:#cfe4f6;font-size:12px;line-height:1.65}.library-tools{display:flex;align-items:end;justify-content:space-between;gap:12px}.library-search{display:grid;gap:6px;flex:1}.library-search input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#0d1727;color:var(--text)}.library-search input:focus{outline:none;border-color:#5ba6dc;box-shadow:0 0 0 3px rgba(91,166,220,.12)}.song-library{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}.song-library-card{display:grid;grid-template-rows:auto 1fr auto;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0d1727;min-width:0}.song-library-card h3{font-size:14px;line-height:1.4;margin:0}.song-library-card p{font-size:11px;line-height:1.55;color:var(--muted);margin:0}.song-library-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}.song-library-actions{display:flex;gap:7px;align-items:stretch}.song-library-actions .btn{flex:1;text-align:center;white-space:nowrap}.source-link{color:#cfe4f6;text-decoration:none}.license-tag{border-color:#3f8b73;color:#b9f4cf}.library-empty{padding:18px 12px;border:1px dashed #52708f;border-radius:10px;color:var(--muted);font-size:12px;text-align:center}.library-note{margin-top:2px}.library-note a{color:#9fd6ff}
+@media(max-width:780px){.library-tools{display:grid;align-items:stretch}.song-library{grid-template-columns:1fr}.song-library-actions{display:grid;grid-template-columns:1fr 1fr}.song-library-actions .btn{width:100%}}
 </style>
 </head>
 <body>
@@ -149,11 +152,16 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
     </div>
   </div>
 
-  <section class="panel guide">
-    <header><h2>本次試作曲｜G 大調小步舞曲</h2><span class="mini">Mobile 六軌編制 · 公共領域</span></header>
-    <div class="body song-card">
-      <div><h3>Christian Petzold — Minuet in G major, BWV Anh. 114</h3><p>依 Mutopia 公版 MIDI 轉製；此曲過去曾誤署為 J. S. Bach。保留來源速度 ♩=140、3/4 拍與 32 小節主體，約 41 秒；原譜兩段反覆記號未重複展開。樂譜已拆成 Mobile 可用的單音聲部，六個遊戲欄位中使用四軌，其餘保留空軌方便再編曲。來源：<a href="https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=75" target="_blank" rel="noopener">Mutopia 作品頁與 Public Domain 標示</a>。</p></div>
-      <button class="btn good" id="loadSongCard">載入手遊版樂譜</button>
+  <section class="panel library-panel">
+    <header><h2>公版歌曲庫</h2><span class="mini">Mutopia · Public Domain</span></header>
+    <div class="body stack">
+      <div class="library-intro">從 Mutopia 公版曲目挑選；每首保留來源連結。按「載入到編輯器」會轉成 Mobile 六軌，可再調整後複製主旋律、和弦 1、和弦 2。</div>
+      <div class="library-tools">
+        <label class="library-search">搜尋曲名或作曲家<input id="songSearch" class="control" type="search" placeholder="例如：Bach、艾莉絲" aria-label="搜尋公版歌曲"></label>
+        <span class="mini" id="songLibraryCount" aria-live="polite"></span>
+      </div>
+      <div id="songLibrary" class="song-library" aria-live="polite"></div>
+      <div class="hint library-note">曲目頁面標示 Public Domain；本頁使用其 MIDI 作為轉製來源，保留 Mutopia 作品頁與<a href="https://www.mutopiaproject.org/legal.html" target="_blank" rel="noopener">授權說明</a>。</div>
     </div>
   </section>
 
@@ -211,6 +219,13 @@ const DEFAULT_VOLUME=8;
 let project={profile:'mobile',tempo:120,tempoMap:[{beat:0,bpm:120}],meter:'4/4',tracks:[],mml:'',originalText:'',sourceDirty:false,updated:Date.now()};
 let activeTrack=0, view={minPitch:36,maxPitch:84,beatOffset:0,zoom:1}, play={ctx:null,nodes:[],raf:0,startAudio:0,startBeat:0,endBeat:0,running:false,currentBeat:0},pointer={mode:null,note:null,startX:0,startY:0,orig:null};
 const SAMPLE_SONG_MML='MML@t140v11<g2a4l2.b>c<bagl4>d<bg>d<d8>c8<b8a8b2agbg>c2.<b>c8<b8a8g8a2f+g2b>cd<dg2<g>g2.f+2.egea2<a>a2.b>dc+d<f+a>d<d>c<b2b>c2c<bag>d2a<d2.egf+g<b>dgd<g,v11<b2>b8>c8l4d<gg>ec8d8e8f+8g<gg>cl8dc<bab4>c<bagf+4gabga2.>d4<gab>cd4<g4g4>e4cdef+g4<g4g4>c4dc<bab4>c<baga4bagf+g2.>b4gabga4def+dg4ef+gdc+4<b>c+<a4ab>c+def+l4gf+ef+<a>c+d2.d<d2>e<e2>dc<bl8agf+gr4def+gl4<f+>>c<bab8>d8<gf+<b2.,v11d2l1..rrr4r1b16rrrrrrrr8.r2l8gf+g4r4gf+g4r1..r4abr1.d2.,v11>d4<g8a8l1..rrrrrrrrrrrrrg2.,,;';
+const MUTOPIA_SONGS=[
+ {id:'minuet-g',title:'G 大調小步舞曲',originalTitle:'Menuet',composer:'J. S. Bach（後來考證為 Christian Petzold）',opus:'BWV Anh. 114',style:'巴洛克',instrument:'鍵盤',sourceUrl:'https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=75',midiFile:'anna-magdalena-04.mid',meter:'3/4',featured:true},
+ {id:'polonaise-f',title:'F 大調波蘭舞曲',originalTitle:'Polonaise in F major',composer:'J. S. Bach',opus:'BWV Anh. 117a',style:'巴洛克',instrument:'鋼琴',sourceUrl:'https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1013',midiFile:'mutopia-bwv117a-polonaise.mid',meter:'3/4'},
+ {id:'sheep-graze',title:'羊兒安全地吃草',originalTitle:'Schafe Können Sicher Weiden',composer:'J. S. Bach',opus:'BWV 208',style:'巴洛克',instrument:'長笛／女高音／低音持續',sourceUrl:'https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1794',midiFile:'mutopia-bwv208-sheep.mid',meter:'4/4'},
+ {id:'chorale-269',title:'我的心所喜愛的根源',originalTitle:'Aus meines Herzens Grunde（Chorale 1）',composer:'J. S. Bach',opus:'BWV 269',style:'巴洛克',instrument:'鍵盤',sourceUrl:'https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=378',midiFile:'mutopia-bwv269-chorale.mid',meter:'4/4'},
+ {id:'fur-elise',title:'給艾莉絲',originalTitle:'Für Elise',composer:'L. V. Beethoven',opus:'WoO 59',style:'古典',instrument:'鋼琴',sourceUrl:'https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=931',midiFile:'mutopia-woo59-fur-elise.mid'}
+];
 let soundBank=null;
 
 function pdef(){return PROFILES[project.profile]}
@@ -488,7 +503,33 @@ $('#applyMml').onclick=()=>{parseMml(els.mml.value,{asSource:true});toast('已�
 $('#formatMml').onclick=formatText;$('#optimizeMml').onclick=optimizeText;$('#fitLimits').onclick=fitLimits;
 $('#loadDemo').onclick=()=>{els.mml.value=demoMml();parseMml(els.mml.value,{asSource:true});toast('已載入新手範例 ✨')};
 function loadSampleSong(){stopPlayback();project.profile='mobile';els.profile.value='mobile';project.meter='3/4';els.meter.value='3/4';project.tempo=140;els.tempo.value=140;ensureTracks(6);els.mml.value=SAMPLE_SONG_MML;parseMml(SAMPLE_SONG_MML,{asSource:true});view.beatOffset=0;renderAll();updateTime(0,songEndBeat());toast('已載入 Petzold《G 大調小步舞曲》手遊版')}
-$('#loadSong').onclick=loadSampleSong;$('#loadSongCard').onclick=loadSampleSong;
+function renderSongLibrary(filter=''){
+ const host=$('#songLibrary');if(!host)return;const q=(filter||'').trim().toLowerCase();const songs=MUTOPIA_SONGS.filter(s=>[s.title,s.originalTitle,s.composer,s.opus,s.style,s.instrument].join(' ').toLowerCase().includes(q));host.innerHTML='';
+ if(!songs.length){const empty=document.createElement('div');empty.className='library-empty';empty.textContent='找不到符合的曲目；試試作曲家、曲名或作品編號。';host.appendChild(empty)}
+ for(const song of songs){
+  const card=document.createElement('article');card.className='song-library-card';
+  const info=document.createElement('div');
+  const tags=document.createElement('div');tags.className='song-library-meta';
+  const license=document.createElement('span');license.className='pill license-tag';license.textContent='Public Domain';tags.appendChild(license);
+  const style=document.createElement('span');style.className='pill';style.textContent=song.style;tags.appendChild(style);
+  if(song.featured){const featured=document.createElement('span');featured.className='pill';featured.textContent='推薦試作';tags.appendChild(featured)}
+  const title=document.createElement('h3');title.textContent=song.title;
+  const desc=document.createElement('p');desc.textContent=`${song.composer} · ${song.originalTitle} · ${song.opus} · ${song.instrument}`;
+  info.append(tags,title,desc);
+  const actions=document.createElement('div');actions.className='song-library-actions';
+  const load=document.createElement('button');load.type='button';load.className='btn good';load.textContent='載入到編輯器';load.addEventListener('click',()=>loadMutopiaSong(song.id));
+  const source=document.createElement('a');source.className='btn ghost source-link';source.href=song.sourceUrl;source.target='_blank';source.rel='noopener';source.textContent='查看 Mutopia';
+  actions.append(load,source);card.append(info,actions);host.appendChild(card);
+ }
+ const count=$('#songLibraryCount');if(count)count.textContent=`${songs.length} / ${MUTOPIA_SONGS.length} 首`;
+}
+async function loadMutopiaSong(id){
+ const song=MUTOPIA_SONGS.find(s=>s.id===id);if(!song)return;
+ if(song.id==='minuet-g'){loadSampleSong();toast('曲庫：已載入 G 大調小步舞曲');return}
+ try{stopPlayback();project.profile='mobile';els.profile.value='mobile';project.meter=song.meter||'4/4';els.meter.value=project.meter;els.useSong.checked=false;ensureTracks(6);const res=await fetch(song.midiFile);if(!res.ok)throw new Error(`找不到 MIDI（${res.status}）`);const mid=parseMidiBuffer(await res.arrayBuffer());importPolyphonic(mid.notes,mid.tempoMap,'MIDI');view.beatOffset=0;updateTime(0,songEndBeat());drawRoll();toast(`曲庫：已載入${song.title}`)}catch(err){toast(`歌曲載入失敗：${err.message}`)}
+}
+$('#loadSong').onclick=loadSampleSong;
+const songSearch=$('#songSearch');if(songSearch)songSearch.oninput=()=>renderSongLibrary(songSearch.value);renderSongLibrary();
 $('#newProject').onclick=()=>{if(confirm('建立新的空白樂譜？目前專案會被新的自動存檔取代。'))resetProject()};
 els.profile.onchange=e=>applyProfile(e.target.value);
 els.tempo.onchange=e=>{let bpm=Math.max(20,Math.min(300,+e.target.value||120));project.tempo=bpm;project.tempoMap=normalizeTempoMap([{beat:0,bpm},...(project.tempoMap||[]).filter(x=>x.beat>0)],bpm);commitNotes('已修改起始 BPM');renderAll()};

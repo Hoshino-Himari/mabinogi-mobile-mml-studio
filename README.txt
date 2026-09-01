@@ -4,9 +4,16 @@
 
 本版重點：
 - 預設為手遊規格：6 軌、每軌最多 2400 字。
-- 內建 Christian Petzold《G 大調小步舞曲，BWV Anh. 114》試作曲。
-- 試作曲依 Mutopia 公共領域 MIDI 轉製；來源：
+- 內建 Mutopia 公版歌曲庫：G 大調小步舞曲、F 大調波蘭舞曲、羊兒安全地吃草、我的心所喜愛的根源、給艾莉絲。
+- 歌曲庫可依曲名／作曲家搜尋；每首都能一鍵載入並轉成 Mobile 六軌，再分別複製主旋律、和弦 1、和弦 2。
+- 歌曲庫保留各曲 Mutopia 作品頁與 Public Domain 標示；授權說明：
+  https://www.mutopiaproject.org/legal.html
+- 曲目來源頁：
   https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=75
+  https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1013
+  https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1794
+  https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=378
+  https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=931
 - 超過 2400 字、使用第 7 軌或有阻擋語法錯誤時，會停用複製與下載，避免輸出不完整樂譜。
 - 手機版提供「樂譜／捲軸／設定輸出」三頁籤。
 - 鋼琴卷軸支援水平時間捲動、3/4 等拍號小節線與播放跟隨。
