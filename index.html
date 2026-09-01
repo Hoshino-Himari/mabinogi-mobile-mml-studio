@@ -24,6 +24,10 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
 /* Mutopia 公版歌曲庫 */
 .library-panel{margin-top:12px}.library-intro{color:#cfe4f6;font-size:12px;line-height:1.65}.library-tools{display:flex;align-items:end;justify-content:space-between;gap:12px}.library-search{display:grid;gap:6px;flex:1}.library-search input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#0d1727;color:var(--text)}.library-search input:focus{outline:none;border-color:#5ba6dc;box-shadow:0 0 0 3px rgba(91,166,220,.12)}.song-library{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}.song-library-card{display:grid;grid-template-rows:auto 1fr auto;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0d1727;min-width:0}.song-library-card h3{font-size:14px;line-height:1.4;margin:0}.song-library-card p{font-size:11px;line-height:1.55;color:var(--muted);margin:0}.song-library-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}.song-library-actions{display:flex;gap:7px;align-items:stretch}.song-library-actions .btn{flex:1;text-align:center;white-space:nowrap}.source-link{color:#cfe4f6;text-decoration:none}.license-tag{border-color:#3f8b73;color:#b9f4cf}.library-empty{padding:18px 12px;border:1px dashed #52708f;border-radius:10px;color:var(--muted);font-size:12px;text-align:center}.library-note{margin-top:2px}.library-note a{color:#9fd6ff}
 @media(max-width:780px){.library-tools{display:grid;align-items:stretch}.song-library{grid-template-columns:1fr}.song-library-actions{display:grid;grid-template-columns:1fr 1fr}.song-library-actions .btn{width:100%}}
+/* 緊湊控制項與主要頁籤 */
+.btn{padding:7px 10px;min-height:34px;border-radius:9px;font-size:13px;line-height:1.25}.control{padding:8px 10px;font-size:13px}.filelabel{min-height:38px;padding:7px 8px;font-size:12px}.trackbtn{padding:6px 8px;font-size:12px}.statuspill{padding:7px 9px;font-size:12px}.page-nav{display:flex;gap:6px;align-items:center;width:max-content;margin-top:10px;padding:4px;border:1px solid var(--line);border-radius:12px;background:rgba(17,27,45,.84)}.page-tab{border:1px solid transparent;border-radius:8px;background:transparent;color:var(--muted);padding:7px 12px;font-size:13px;line-height:1.2;cursor:pointer}.page-tab:hover{border-color:#4c6485;color:var(--text)}.page-tab.active{border-color:var(--accent);background:#193c31;color:var(--text)}.page-tab-count{display:inline-grid;place-items:center;min-width:20px;height:18px;margin-left:4px;padding:0 5px;border-radius:999px;background:#294866;color:#dff7ff;font-size:10px}.page-hidden{display:none!important}.library-page-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.song-library-actions .btn{min-height:32px;padding:6px 8px;font-size:12px}
+@media(max-width:780px){.page-nav{width:100%;margin-top:8px}.page-tab{flex:1;padding:7px 8px}.library-panel{margin-top:8px}.toolbar .btn{min-height:32px}}
+@media(max-width:780px){.toolbar{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:6px}.toolbar .control{grid-column:1/-1;width:100%;flex:none}.toolbar .btn{width:100%;min-width:0;flex:none}.toolbar .statuspill{justify-self:start}}
 </style>
 </head>
 <body>
@@ -43,11 +47,16 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
     </div>
   </div>
 
-  <nav class="mobile-nav" aria-label="手機工作區">
+  <nav class="page-nav" id="pageNav" aria-label="主要頁面" role="tablist">
+    <button class="page-tab active" type="button" role="tab" aria-selected="true" aria-controls="editorWorkspace" data-page="editor">🎼 作曲編輯器</button>
+    <button class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="songLibraryPage" data-page="library">📚 歌曲庫 <span class="page-tab-count" id="pageLibraryCount">5</span></button>
+  </nav>
+
+  <nav class="mobile-nav" id="workspaceNav" aria-label="手機工作區">
     <button class="btn" data-view="score">樂譜</button><button class="btn active" data-view="roll">捲軸</button><button class="btn" data-view="settings">設定／輸出</button>
   </nav>
 
-  <div class="grid view-roll">
+  <div class="grid view-roll" id="editorWorkspace">
     <div class="leftcol stack">
       <section class="panel">
         <header><h2>① 匯入／直接貼上 MML</h2><span class="mini">MML 原始碼</span></header>
@@ -152,7 +161,7 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
     </div>
   </div>
 
-  <section class="panel library-panel">
+  <section class="panel library-panel page-hidden" id="songLibraryPage" role="tabpanel">
     <header><h2>公版歌曲庫</h2><span class="mini">Mutopia · Public Domain</span></header>
     <div class="body stack">
       <div class="library-intro">從 Mutopia 公版曲目挑選；每首保留來源連結。按「載入到編輯器」會轉成 Mobile 六軌，可再調整後複製主旋律、和弦 1、和弦 2。</div>
@@ -165,7 +174,7 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
     </div>
   </section>
 
-  <section class="panel guide">
+  <section class="panel guide" id="gettingStartedGuide">
     <header><h2>新手只要記得這 4 步</h2><span class="mini">所有事情都在這一頁完成</span></header>
     <div class="body guidegrid">
       <div class="step"><b>1. 選版本</b><p>PC 或 Mobile。工具會自動切軌數、字數上限與驗證規則。</p></div>
@@ -175,7 +184,7 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
     </div>
   </section>
 
-  <section class="panel guide">
+  <section class="panel guide" id="researchGuide">
     <header><h2>研究依據與版本提醒</h2><span class="mini">社群規格可能隨遊戲更新</span></header>
     <div class="body sourcebox">
       原始指定教學：
@@ -193,7 +202,7 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
   </section>
 </div>
 
-<div class="transport">
+<div class="transport" id="transportBar">
   <button class="btn primary" id="play">▶ 試聽</button>
   <button class="btn" id="stop">■ 停止</button>
   <span class="mini hide-sm" id="timeLabel">0:00 / 0:00</span>
@@ -521,15 +530,27 @@ function renderSongLibrary(filter=''){
   const source=document.createElement('a');source.className='btn ghost source-link';source.href=song.sourceUrl;source.target='_blank';source.rel='noopener';source.textContent='查看 Mutopia';
   actions.append(load,source);card.append(info,actions);host.appendChild(card);
  }
- const count=$('#songLibraryCount');if(count)count.textContent=`${songs.length} / ${MUTOPIA_SONGS.length} 首`;
+ const count=$('#songLibraryCount');if(count)count.textContent=`${songs.length} / ${MUTOPIA_SONGS.length} 首`;const badge=$('#pageLibraryCount');if(badge)badge.textContent=MUTOPIA_SONGS.length;
+}
+function setPage(page='editor'){
+ const library=page==='library';
+ $('#editorWorkspace')?.classList.toggle('page-hidden',library);
+ $('#workspaceNav')?.classList.toggle('page-hidden',library);
+ $('#gettingStartedGuide')?.classList.toggle('page-hidden',library);
+ $('#researchGuide')?.classList.toggle('page-hidden',library);
+ $('#songLibraryPage')?.classList.toggle('page-hidden',!library);
+ $('#transportBar')?.classList.toggle('page-hidden',library);
+ document.querySelectorAll('.page-tab').forEach(tab=>{const active=tab.dataset.page===page;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active))});
+ if(!library)setTimeout(resizeCanvas,0);
 }
 async function loadMutopiaSong(id){
  const song=MUTOPIA_SONGS.find(s=>s.id===id);if(!song)return;
- if(song.id==='minuet-g'){loadSampleSong();toast('曲庫：已載入 G 大調小步舞曲');return}
- try{stopPlayback();project.profile='mobile';els.profile.value='mobile';project.meter=song.meter||'4/4';els.meter.value=project.meter;els.useSong.checked=false;ensureTracks(6);const res=await fetch(song.midiFile);if(!res.ok)throw new Error(`找不到 MIDI（${res.status}）`);const mid=parseMidiBuffer(await res.arrayBuffer());importPolyphonic(mid.notes,mid.tempoMap,'MIDI');view.beatOffset=0;updateTime(0,songEndBeat());drawRoll();toast(`曲庫：已載入${song.title}`)}catch(err){toast(`歌曲載入失敗：${err.message}`)}
+ if(song.id==='minuet-g'){setPage('editor');loadSampleSong();toast('曲庫：已載入 G 大調小步舞曲');return}
+ try{stopPlayback();project.profile='mobile';els.profile.value='mobile';project.meter=song.meter||'4/4';els.meter.value=project.meter;els.useSong.checked=false;ensureTracks(6);const res=await fetch(song.midiFile);if(!res.ok)throw new Error(`找不到 MIDI（${res.status}）`);const mid=parseMidiBuffer(await res.arrayBuffer());importPolyphonic(mid.notes,mid.tempoMap,'MIDI');setPage('editor');view.beatOffset=0;updateTime(0,songEndBeat());drawRoll();toast(`曲庫：已載入${song.title}`)}catch(err){toast(`歌曲載入失敗：${err.message}`)}
 }
 $('#loadSong').onclick=loadSampleSong;
 const songSearch=$('#songSearch');if(songSearch)songSearch.oninput=()=>renderSongLibrary(songSearch.value);renderSongLibrary();
+document.querySelectorAll('.page-tab').forEach(tab=>tab.addEventListener('click',()=>setPage(tab.dataset.page)));setPage('editor');
 $('#newProject').onclick=()=>{if(confirm('建立新的空白樂譜？目前專案會被新的自動存檔取代。'))resetProject()};
 els.profile.onchange=e=>applyProfile(e.target.value);
 els.tempo.onchange=e=>{let bpm=Math.max(20,Math.min(300,+e.target.value||120));project.tempo=bpm;project.tempoMap=normalizeTempoMap([{beat:0,bpm},...(project.tempoMap||[]).filter(x=>x.beat>0)],bpm);commitNotes('已修改起始 BPM');renderAll()};
