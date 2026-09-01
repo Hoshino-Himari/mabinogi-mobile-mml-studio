@@ -11,7 +11,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:1
 .brand{display:flex;align-items:center;gap:10px;min-width:240px}.logo{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#05121c;font-weight:900;font-size:22px}.brand h1{font-size:18px;margin:0}.brand small{display:block;color:var(--muted);margin-top:2px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.control,.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:11px;padding:9px 11px}.btn:hover,.control:hover{border-color:#4c6485}.btn.primary{background:linear-gradient(135deg,#2f7f78,#2b699e);border-color:#68d7c1}.btn.good{background:#193c31;border-color:#3f8b73}.btn.ghost{background:transparent}.btn.danger{background:#40212a;border-color:#71404d}.statuspill{padding:8px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:13px}
 .grid{display:grid;grid-template-columns:minmax(280px,360px) minmax(520px,1fr) minmax(270px,340px);gap:12px;margin-top:12px;align-items:start}.panel{background:rgba(17,27,45,.94);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}.panel header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 13px;border-bottom:1px solid var(--line);background:rgba(23,36,58,.72)}.panel header h2{font-size:14px;margin:0}.panel .body{padding:12px}.hint{color:var(--muted);font-size:12px;line-height:1.55}.stack{display:grid;gap:10px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{min-width:0}label{font-size:12px;color:var(--muted)}
 textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line);background:#09111f;color:#dff7ff;border-radius:12px;padding:12px;line-height:1.55;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;outline:none}textarea:focus{border-color:#5ba6dc;box-shadow:0 0 0 3px rgba(91,166,220,.12)}
-.importbox{display:grid;grid-template-columns:1fr 1fr;gap:8px}.filelabel{display:grid;place-items:center;text-align:center;min-height:44px;border:1px dashed #52708f;border-radius:11px;background:#0e1a2a;color:#cfe4f6;cursor:pointer}.filelabel input{display:none}.meter{height:8px;background:#08111c;border-radius:99px;overflow:hidden;border:1px solid #25344c}.meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ok),var(--warn),var(--danger));transition:.2s}.charcard{padding:8px;border:1px solid var(--line);border-radius:10px;background:#0d1727}.charcard .top{display:flex;justify-content:space-between;gap:10px;font-size:12px;margin-bottom:6px}
+.importbox{display:grid;grid-template-columns:1fr 1fr;gap:8px}.filelabel{display:grid;place-items:center;text-align:center;min-height:44px;border:1px dashed #52708f;border-radius:11px;background:#0e1a2a;color:#cfe4f6;cursor:pointer}.filelabel input{display:none}
 .centerpanel{min-height:720px}.trackbar{display:flex;gap:6px;overflow:auto;padding:8px 10px;border-bottom:1px solid var(--line);background:#0e1726}.trackbtn{white-space:nowrap;border:1px solid var(--line);background:#132036;color:#dfefff;border-radius:9px;padding:7px 9px}.trackbtn.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(116,230,197,.12)}.trackbtn .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--accent2)}
 .rollwrap{position:relative;height:590px;background:#0a1220;overflow:hidden}.rollwrap canvas{display:block;width:100%;height:100%;touch-action:none}.rolllegend{display:flex;align-items:center;gap:6px;min-height:36px;padding:6px 10px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#0e1726}.tag{font-size:11px;padding:5px 7px;border:1px solid var(--line);border-radius:999px;background:#0d1727;color:#c8d8e8}.rollhelp{margin:0;padding:8px 10px;border-top:1px solid var(--line);background:#0e1726;color:#aabed2;font-size:11px;line-height:1.45}
 .inspector{display:grid;gap:9px}.field{display:grid;grid-template-columns:100px 1fr;gap:8px;align-items:center}.field input,.field select{width:100%;border:1px solid var(--line);background:#0d1727;color:var(--text);padding:8px;border-radius:9px}.issues{display:grid;gap:8px;max-height:340px;overflow:auto}.issue{border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:10px;padding:9px;background:#0d1727}.issue.error{border-left-color:var(--danger)}.issue.ok{border-left-color:var(--ok)}.issue b{font-size:12px}.issue div{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.45}.issue button{margin-top:6px;padding:5px 7px;border-radius:7px;border:1px solid var(--line);background:#17243a;color:#d8ebff;font-size:11px}
@@ -90,15 +90,11 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
         </div>
       </section>
 
-      <section class="panel">
-        <header><h2>② 遊戲字數限制</h2><span class="mini" id="limitTitle"></span></header>
-        <div class="body stack" id="charMeters"></div>
-      </section>
     </div>
 
     <section class="panel centerpanel">
       <header>
-        <h2>③ 視覺鋼琴卷軸</h2>
+        <h2>② 視覺鋼琴卷軸</h2>
         <div class="row">
           <label>格線
             <select id="gridStep" class="control">
@@ -119,7 +115,7 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
 
     <div class="rightcol stack">
       <section class="panel">
-        <header><h2>④ 樂曲設定</h2><span class="mini">即時套用</span></header>
+        <header><h2>③ 樂曲設定</h2><span class="mini">即時套用</span></header>
         <div class="body inspector">
           <div class="field"><label for="tempo">BPM</label><input id="tempo" type="number" min="20" max="300" value="120"></div>
           <div class="field"><label for="meter">拍號</label><select id="meter"><option>4/4</option><option>3/4</option><option>6/8</option><option>2/4</option></select></div>
@@ -141,7 +137,7 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
       </section>
 
       <section class="panel">
-        <header><h2>⑤ 瑪奇相容性檢查</h2><button class="btn ghost" id="recheck">重新檢查</button></header>
+        <header><h2>④ 瑪奇相容性檢查</h2><button class="btn ghost" id="recheck">重新檢查</button></header>
         <div class="body issues" id="issues"></div>
       </section>
 
@@ -198,7 +194,7 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
 'use strict';
 const $=s=>document.querySelector(s);
 const els={
- profile:$('#profile'),mml:$('#mmlInput'),roll:$('#roll'),rollwrap:$('#rollwrap'),trackbar:$('#trackbar'),issues:$('#issues'),meters:$('#charMeters'),tempo:$('#tempo'),meter:$('#meter'),grid:$('#gridStep'),zoom:$('#zoom'),vol:$('#trackVolume'),instrument:$('#instrument'),save:$('#saveState'),pos:$('#songPos'),time:$('#timeLabel'),sourceState:$('#sourceState'),tempoMap:$('#tempoMapInput'),soundPreset:$('#soundPreset'),soundState:$('#soundbankState'),quantize:$('#quantize'),transpose:$('#transpose'),splitMode:$('#splitMode'),overflow:$('#overflowPolicy'),removeDrums:$('#removeDrums'),preserveTempo:$('#preserveTempo'),useSong:$('#useSongTrack')
+profile:$('#profile'),mml:$('#mmlInput'),roll:$('#roll'),rollwrap:$('#rollwrap'),trackbar:$('#trackbar'),issues:$('#issues'),tempo:$('#tempo'),meter:$('#meter'),grid:$('#gridStep'),zoom:$('#zoom'),vol:$('#trackVolume'),instrument:$('#instrument'),save:$('#saveState'),pos:$('#songPos'),time:$('#timeLabel'),sourceState:$('#sourceState'),tempoMap:$('#tempoMapInput'),soundPreset:$('#soundPreset'),soundState:$('#soundbankState'),quantize:$('#quantize'),transpose:$('#transpose'),splitMode:$('#splitMode'),overflow:$('#overflowPolicy'),removeDrums:$('#removeDrums'),preserveTempo:$('#preserveTempo'),useSong:$('#useSongTrack')
 };
 const ctx=els.roll.getContext('2d');
 const PROFILES={
@@ -326,7 +322,7 @@ function serializeTrackOptimized(track,index,{globalTempo=false}={}){
  let si=0,out='';for(let i=0;i<N;i++){const ch=choice[i][si];out+=ch.text;si=ch.next}return out;
 }
 function serializeAllOptimized({globalTempo=true}={}){const p=pdef(),tracks=[];for(let i=0;i<p.fields;i++)tracks.push(serializeTrackOptimized(project.tracks[i],i,{globalTempo}));return wrapTracks(tracks);}
-function commitNotes(reason='已修改音符'){project.mml=serializeAllOptimized({globalTempo:true});els.mml.value=project.mml;const raws=splitTracks(project.mml);project.tracks.forEach((t,i)=>{t.raw=raws[i]||'';t.tempoEvents=i===0?project.tempoMap.map(x=>({...x,track:0})):[]});setSourceState(true,`${reason}：已切換成最佳化輸出模式。`);updateMeters();updateValidation();syncTempoMapUI();scheduleSave();}
+function commitNotes(reason='已修改音符'){project.mml=serializeAllOptimized({globalTempo:true});els.mml.value=project.mml;const raws=splitTracks(project.mml);project.tracks.forEach((t,i)=>{t.raw=raws[i]||'';t.tempoEvents=i===0?project.tempoMap.map(x=>({...x,track:0})):[]});setSourceState(true,`${reason}：已切換成最佳化輸出模式。`);updateValidation();syncTempoMapUI();scheduleSave();}
 function semanticSignature(r){return JSON.stringify({n:r.notes.map(n=>[+n.start.toFixed(6),+n.dur.toFixed(6),n.pitch,n.velocity]),t:r.tempos.map(t=>[+t.beat.toFixed(6),t.bpm])})}
 function optimizeText(){
  const before=els.mml.value,raws=splitTracks(before),p=pdef(),out=[];let saved=0,skipped=0;
@@ -371,12 +367,11 @@ function rollDouble(e){const r=els.roll.getBoundingClientRect(),x=e.clientX-r.le
 // ---------- rendering/validation ----------
 function renderTracks(){const p=pdef();ensureTracks(p.fields);els.trackbar.innerHTML='';project.tracks.forEach((t,i)=>{let b=document.createElement('button');b.className='trackbtn'+(i===activeTrack?' active':'');b.innerHTML=`<span class="dot"></span>${t.name}${t.mute?' · 靜音':''}`;b.onclick=()=>{activeTrack=i;renderTracks();syncInspector();drawRoll()};els.trackbar.appendChild(b)});$('#activeTrackTag').textContent=`Track ${activeTrack+1} · ${project.tracks[activeTrack].name}`;syncInspector()}
 function syncInspector(){let t=project.tracks[activeTrack];if(!t)return;els.vol.value=t.volume;els.instrument.value=t.instrument==='soundbank'&&soundBank?'soundbank':t.instrument;$('#muteTrack').textContent=t.mute?'🔇':'🔊'}
-function updateMeters(){const p=pdef();$('#limitTitle').textContent=p.name;els.meters.innerHTML='';for(let i=0;i<p.fields;i++){let raw=currentRaw(i),n=compactLen(raw),limit=p.limits[i],song=p.songIndex===i,d=document.createElement('div');d.className='charcard';let ratio=limit?Math.min(100,n/limit*100):0;d.innerHTML=`<div class="top"><span>Track ${i+1} · ${project.tracks[i].name}</span><b>${n} / ${limit??'Song 規則依版本'}</b></div><div class="meter"><span style="width:${ratio}%"></span></div>${song?'<div class="tiny">Song 欄位會完整保留；未確認的版本上限不會硬猜成固定數字。</div>':''}`;els.meters.appendChild(d)}}
 function validate(extra=[]){const p=pdef(),out=[...extra],rawCount=splitTracks(project.mml||els.mml.value).length;if(rawCount>p.fields)out.push({type:'error',msg:`目前有 ${rawCount} 個欄位，${p.name} 最多 ${p.fields} 軌`,detail:'請先刪除或重新分配多出的軌道，匯出不會靜默裁切。'});project.tracks.forEach((t,i)=>{let raw=currentRaw(i),n=compactLen(raw),limit=p.limits[i];if(!t.parseSafe)out.push({type:'error',track:i,msg:'含有無法安全解析的語法',detail:'請依解析錯誤修正後再匯出。'});if(limit&&n>limit)out.push({type:'error',track:i,msg:`字數超過上限：${n} / ${limit}`,detail:'先按「無損精簡」；若仍超過，再主動使用「智慧壓到字數限制」。'});if(/[\[\]]/.test(raw))out.push({type:'error',track:i,msg:'偵測到 [ ] 和弦擴充語法',detail:'遊戲原生聲部是單音軌，請使用智慧拆軌。'});let vs=[...raw.matchAll(/v(\d+)/ig)].map(m=>+m[1]);if(vs.some(v=>v<0||v>15))out.push({type:'error',track:i,msg:'音量 v 超出 0–15',detail:'請調回遊戲可接受範圍。'});if(p.mobile){let os=[...raw.matchAll(/o(\d+)/ig)].map(m=>+m[1]);if(os.some(o=>o<1||o>7))out.push({type:'warn',track:i,msg:'Mobile 八度可能超出 o1–o7',detail:'請以你的遊戲版本實測。'})}let ns=[...t.notes].sort((a,b)=>a.start-b.start);for(let j=1;j<ns.length;j++)if(ns[j].start<ns[j-1].start+ns[j-1].dur-1e-6){out.push({type:'error',track:i,msg:'同一軌有重疊音符',detail:'MML 單軌不能同時發兩音；請用智慧拆軌。'});break}});for(const te of project.tempoMap||[])if(te.bpm<32||te.bpm>255)out.push({type:'warn',msg:`Tempo Map 在第 ${trimNum(te.beat)} 拍有 BPM ${te.bpm}`,detail:'超出常見 t32–t255 範圍，請進遊戲實測或調整。'});if(project.sourceDirty)out.push({type:'warn',msg:'目前是「編輯後最佳化輸出」',detail:'你已改過鋼琴卷軸、速度或其他會改寫 MML 的內容；原始貼入文字仍留在專案 originalText。'});return out}
 function exportBlocked(){return validate().some(x=>x.type==='error')}
 function guardExport(action){if(exportBlocked()){updateValidation();document.querySelector('#issues')?.scrollIntoView({behavior:'smooth',block:'center'});toast('有阻擋錯誤，修正後才能複製或下載');return}action()}
 function updateValidation(extra=[]){const list=validate(extra);els.issues.innerHTML='';if(!list.length){els.issues.innerHTML='<div class="issue ok"><b>✓ 目前沒有偵測到阻擋匯出的問題</b><div>仍建議進遊戲實測音色與版本相容性。</div></div>';return}for(const x of list){let d=document.createElement('div');d.className='issue '+(x.type==='error'?'error':'');d.innerHTML=`<b>${x.type==='error'?'⛔':'⚠️'} ${x.track!=null?'Track '+(x.track+1)+' · ':''}${x.msg}</b><div>${x.detail||'請檢查後再匯出。'}</div>`;els.issues.appendChild(d)}}
-function renderAll(extra=[]){renderTracks();updateMeters();updateValidation(extra);drawRoll();renderTrackCopyButtons();const blocked=exportBlocked();$('#exportHint').textContent=blocked?'目前有阻擋錯誤，已停用分軌複製；修正後會自動恢復。':`目前輸出：${pdef().name}。${project.sourceDirty?'已編輯，使用最佳化器重新輸出。':'原文保護中，複製時不會偷偷改寫。'} 主要聲部已分成主旋律、和弦 1、和弦 2；其餘聲部可從進階區展開。`}
+function renderAll(extra=[]){renderTracks();updateValidation(extra);drawRoll();renderTrackCopyButtons();const blocked=exportBlocked();$('#exportHint').textContent=blocked?'目前有阻擋錯誤，已停用分軌複製；修正後會自動恢復。':`目前輸出：${pdef().name}。${project.sourceDirty?'已編輯，使用最佳化器重新輸出。':'原文保護中，複製時不會偷偷改寫。'} 主要聲部已分成主旋律、和弦 1、和弦 2；其餘聲部可從進階區展開。`}
 
 // ---------- SoundFont / DLS ----------
 function four(dv,o){return String.fromCharCode(dv.getUint8(o),dv.getUint8(o+1),dv.getUint8(o+2),dv.getUint8(o+3))}
