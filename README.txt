@@ -1,4 +1,4 @@
-瑪奇 Mobile MML 作曲室 v3
+瑪奇 Mobile MML 作曲室
 
 直接以瀏覽器開啟 index.html 即可使用，不需要安裝。
 
