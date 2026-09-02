@@ -310,13 +310,17 @@ function setSourceState(dirty,msg){project.sourceDirty=dirty;els.sourceState.cla
 function currentRaw(i){if(!project.sourceDirty)return splitTracks(project.mml)[i]||'';return project.tracks[i]?.raw||''}
 
 // ---------- duration + compression ----------
-const DUR_CANDS=(()=>{const a=[];for(let d=1;d<=64;d++){for(let dots=0;dots<=2;dots++){let b=durationBeats(d,dots),code=String(d)+'.'.repeat(dots);a.push({b,code,ticks:Math.round(b*192)})}}const by=new Map();for(const x of a){let k=x.ticks,old=by.get(k);if(!old||x.code.length<old.code.length)by.set(k,x)}return [...by.values()].sort((a,b)=>b.ticks-a.ticks)})();
+function makeDurationCandidates(maxDots){const a=[];for(let d=1;d<=64;d++){for(let dots=0;dots<=maxDots;dots++){let b=durationBeats(d,dots),code=String(d)+'.'.repeat(dots);a.push({b,code,ticks:Math.round(b*192)})}}const by=new Map();for(const x of a){let k=x.ticks,old=by.get(k);if(!old||x.code.length<old.code.length)by.set(k,x)}return [...by.values()].sort((a,b)=>b.ticks-a.ticks)}
+const DUR_CANDS=makeDurationCandidates(2);
+const DUR_CANDS_MOBILE=makeDurationCandidates(1);
 const DUR_BY_TICKS=new Map(DUR_CANDS.map(x=>[x.ticks,x]));
+const DUR_BY_TICKS_MOBILE=new Map(DUR_CANDS_MOBILE.map(x=>[x.ticks,x]));
+function durationSet(){return pdef().mobile?{list:DUR_CANDS_MOBILE,by:DUR_BY_TICKS_MOBILE}:{list:DUR_CANDS,by:DUR_BY_TICKS}}
 function decomposeDuration(beats){
- let ticks=Math.max(1,Math.round(beats*192));if(DUR_BY_TICKS.has(ticks))return [DUR_BY_TICKS.get(ticks).code];
- const maxTick=DUR_CANDS[0].ticks,out=[];while(ticks>maxTick){out.push(DUR_CANDS[0].code);ticks-=maxTick}
+ const {list,by}=durationSet();let ticks=Math.max(1,Math.round(beats*192));if(by.has(ticks))return [by.get(ticks).code];
+ const maxTick=list[0].ticks,out=[];while(ticks>maxTick){out.push(list[0].code);ticks-=maxTick}
  if(!ticks)return out;
- const dp=Array(ticks+1).fill(null);dp[0]={cost:0,parts:[]};for(let t=1;t<=ticks;t++){for(const c of DUR_CANDS){if(c.ticks>t||!dp[t-c.ticks])continue;let cand={cost:dp[t-c.ticks].cost+c.code.length+1,parts:dp[t-c.ticks].parts.concat(c.code)};if(!dp[t]||cand.cost<dp[t].cost)dp[t]=cand}}
+ const dp=Array(ticks+1).fill(null);dp[0]={cost:0,parts:[]};for(let t=1;t<=ticks;t++){for(const c of list){if(c.ticks>t||!dp[t-c.ticks])continue;let cand={cost:dp[t-c.ticks].cost+c.code.length+1,parts:dp[t-c.ticks].parts.concat(c.code)};if(!dp[t]||cand.cost<dp[t].cost)dp[t]=cand}}
  return out.concat(dp[ticks]?.parts||['64']);
 }
 function octaveCmd(cur,target){if(cur===target)return '';let diff=target-cur,rel=(diff>0?'>':'<').repeat(Math.abs(diff)),abs='o'+target;return rel.length<=abs.length?rel:abs;}
@@ -326,7 +330,7 @@ function buildPieces(track,index,{globalTempo=false}={}){
  function addSegment(type,start,dur,pitch=null,velocity=null,tieToNext=false){
   const boundaries=[...tempoMap.keys()].filter(b=>b>start+1e-6&&b<start+dur-1e-6).sort((a,b)=>a-b);let pts=[start,...boundaries,start+dur];
   for(let si=0;si<pts.length-1;si++){
-   let st=pts[si],du=pts[si+1]-st,codes=decomposeDuration(du);for(let ci=0;ci<codes.length;ci++)pieces.push({type,start:st,code:codes[ci],pitch,velocity,tempo:tempoMap.get(Math.round(st*1e6)/1e6),tieAfter:type==='note'&&(ci<codes.length-1||si<pts.length-2||tieToNext)});
+   let st=pts[si],du=pts[si+1]-st,codes=decomposeDuration(du);for(let ci=0;ci<codes.length;ci++)pieces.push({type,start:st,code:codes[ci],pitch,velocity,tempo:ci===0?tempoMap.get(Math.round(st*1e6)/1e6):null,tieAfter:type==='note'&&(ci<codes.length-1||si<pts.length-2||tieToNext)});
   }
  }
  for(const n of ns){if(n.start<cur-1e-6)continue;let gap=n.start-cur;if(gap>1e-6)addSegment('rest',cur,gap);addSegment('note',n.start,n.dur,n.pitch,n.velocity,false);cur=n.start+n.dur;}
@@ -396,11 +400,11 @@ function rollDouble(e){const r=els.roll.getBoundingClientRect(),x=e.clientX-r.le
 // ---------- rendering/validation ----------
 function renderTracks(){const p=pdef();ensureTracks(p.fields);els.trackbar.innerHTML='';project.tracks.forEach((t,i)=>{let b=document.createElement('button');b.className='trackbtn'+(i===activeTrack?' active':'');b.innerHTML=`<span class="dot"></span>${t.name}${t.mute?' · 靜音':''}`;b.onclick=()=>{activeTrack=i;renderTracks();syncInspector();drawRoll()};els.trackbar.appendChild(b)});$('#activeTrackTag').textContent=`Track ${activeTrack+1} · ${project.tracks[activeTrack].name}`;syncInspector()}
 function syncInspector(){let t=project.tracks[activeTrack];if(!t)return;els.vol.value=t.volume;els.instrument.value=t.instrument==='soundbank'&&soundBank?'soundbank':t.instrument;$('#muteTrack').textContent=t.mute?'🔇':'🔊'}
-function validate(extra=[]){const p=pdef(),out=[...extra],rawCount=splitTracks(project.mml||els.mml.value).length;if(rawCount>p.fields)out.push({type:'error',msg:`目前有 ${rawCount} 個欄位，${p.name} 最多 ${p.fields} 軌`,detail:'請先刪除或重新分配多出的軌道，匯出不會靜默裁切。'});project.tracks.forEach((t,i)=>{let raw=currentRaw(i),n=compactLen(raw),limit=p.limits[i];if(!t.parseSafe)out.push({type:'error',track:i,msg:'含有無法安全解析的語法',detail:'請依解析錯誤修正後再匯出。'});if(limit&&n>limit)out.push({type:'error',track:i,msg:`字數超過上限：${n} / ${limit}`,detail:'先按「無損精簡」；若仍超過，再主動使用「智慧壓到字數限制」。'});if(/[\[\]]/.test(raw))out.push({type:'error',track:i,msg:'偵測到 [ ] 和弦擴充語法',detail:'遊戲原生聲部是單音軌，請使用智慧拆軌。'});let vs=[...raw.matchAll(/v(\d+)/ig)].map(m=>+m[1]);if(vs.some(v=>v<0||v>15))out.push({type:'error',track:i,msg:'音量 v 超出 0–15',detail:'請調回遊戲可接受範圍。'});if(p.mobile){let os=[...raw.matchAll(/o(\d+)/ig)].map(m=>+m[1]);if(os.some(o=>o<1||o>7))out.push({type:'warn',track:i,msg:'Mobile 八度可能超出 o1–o7',detail:'請以你的遊戲版本實測。'})}let ns=[...t.notes].sort((a,b)=>a.start-b.start);for(let j=1;j<ns.length;j++)if(ns[j].start<ns[j-1].start+ns[j-1].dur-1e-6){out.push({type:'error',track:i,msg:'同一軌有重疊音符',detail:'MML 單軌不能同時發兩音；請用智慧拆軌。'});break}});for(const te of project.tempoMap||[])if(te.bpm<32||te.bpm>255)out.push({type:'warn',msg:`Tempo Map 在第 ${trimNum(te.beat)} 拍有 BPM ${te.bpm}`,detail:'超出常見 t32–t255 範圍，請進遊戲實測或調整。'});if(project.sourceDirty)out.push({type:'warn',msg:'目前是「編輯後最佳化輸出」',detail:'你已改過鋼琴卷軸、速度或其他會改寫 MML 的內容；原始貼入文字仍留在專案 originalText。'});return out}
+function validate(extra=[]){const p=pdef(),out=[...extra],rawCount=splitTracks(project.mml||els.mml.value).length;if(rawCount>p.fields)out.push({type:'error',msg:`目前有 ${rawCount} 個欄位，${p.name} 最多 ${p.fields} 軌`,detail:'請先刪除或重新分配多出的軌道，匯出不會靜默裁切。'});project.tracks.forEach((t,i)=>{let raw=currentRaw(i),n=compactLen(raw),limit=p.limits[i];if(!t.parseSafe)out.push({type:'error',track:i,msg:'含有無法安全解析的語法',detail:'請依解析錯誤修正後再匯出。'});if(limit&&n>limit)out.push({type:'error',track:i,msg:`字數超過上限：${n} / ${limit}`,detail:'先按「無損精簡」；若仍超過，再主動使用「智慧壓到字數限制」。'});if(/[\[\]]/.test(raw))out.push({type:'error',track:i,msg:'偵測到 [ ] 和弦擴充語法',detail:'遊戲原生聲部是單音軌，請使用智慧拆軌。'});let vs=[...raw.matchAll(/v(\d+)/ig)].map(m=>+m[1]);if(vs.some(v=>v<0||v>15))out.push({type:'error',track:i,msg:'音量 v 超出 0–15',detail:'請調回遊戲可接受範圍。'});if(p.mobile){let os=[...raw.matchAll(/o(\d+)/ig)].map(m=>+m[1]);if(os.some(o=>o<1||o>7))out.push({type:'warn',track:i,msg:'Mobile 八度可能超出 o1–o7',detail:'請以你的遊戲版本實測。'});if(/(?:[a-gr]|l)\d*\.\./i.test(raw))out.push({type:'warn',track:i,msg:'Mobile 原文含有疊加附點',detail:'手遊輸出會自動改用單附點／標準音長，避免遊戲回報 MML 錯誤。'})}let ns=[...t.notes].sort((a,b)=>a.start-b.start);for(let j=1;j<ns.length;j++)if(ns[j].start<ns[j-1].start+ns[j-1].dur-1e-6){out.push({type:'error',track:i,msg:'同一軌有重疊音符',detail:'MML 單軌不能同時發兩音；請用智慧拆軌。'});break}});for(const te of project.tempoMap||[])if(te.bpm<32||te.bpm>255)out.push({type:'warn',msg:`Tempo Map 在第 ${trimNum(te.beat)} 拍有 BPM ${te.bpm}`,detail:'超出常見 t32–t255 範圍，請進遊戲實測或調整。'});if(project.sourceDirty)out.push({type:'warn',msg:'目前是「編輯後最佳化輸出」',detail:'你已改過鋼琴卷軸、速度或其他會改寫 MML 的內容；原始貼入文字仍留在專案 originalText。'});return out}
 function exportBlocked(){return validate().some(x=>x.type==='error')}
 function guardExport(action){if(exportBlocked()){updateValidation();document.querySelector('#issues')?.scrollIntoView({behavior:'smooth',block:'center'});toast('有阻擋錯誤，修正後才能複製或下載');return}action()}
 function updateValidation(extra=[]){const list=validate(extra);els.issues.innerHTML='';if(!list.length){els.issues.innerHTML='<div class="issue ok"><b>✓ 目前沒有偵測到阻擋匯出的問題</b><div>仍建議進遊戲實測音色與版本相容性。</div></div>';return}for(const x of list){let d=document.createElement('div');d.className='issue '+(x.type==='error'?'error':'');d.innerHTML=`<b>${x.type==='error'?'⛔':'⚠️'} ${x.track!=null?'Track '+(x.track+1)+' · ':''}${x.msg}</b><div>${x.detail||'請檢查後再匯出。'}</div>`;els.issues.appendChild(d)}}
-function renderAll(extra=[]){renderTracks();updateValidation(extra);drawRoll();renderTrackCopyButtons();const blocked=exportBlocked();$('#exportHint').textContent=blocked?'目前有阻擋錯誤，已停用分軌複製；修正後會自動恢復。':`目前輸出：${pdef().name}。${project.sourceDirty?'已編輯，使用最佳化器重新輸出。':'原文保護中，複製時不會偷偷改寫。'} 主要聲部已分成主旋律、和弦 1、和弦 2；其餘聲部可從進階區展開。`}
+function renderAll(extra=[]){renderTracks();updateValidation(extra);drawRoll();renderTrackCopyButtons();const blocked=exportBlocked();$('#exportHint').textContent=blocked?'目前有阻擋錯誤，已停用分軌複製；修正後會自動恢復。':`目前輸出：${pdef().name}。${project.sourceDirty?'已編輯，使用最佳化器重新輸出。':'原文保護中，複製時不會偷偷改寫。'} ${pdef().mobile?'複製手遊分軌時會自動避開疊加附點，改用遊戲相容音長。 ':''}主要聲部已分成主旋律、和弦 1、和弦 2；其餘聲部可從進階區展開。`}
 
 // ---------- SoundFont / DLS ----------
 function four(dv,o){return String.fromCharCode(dv.getUint8(o),dv.getUint8(o+1),dv.getUint8(o+2),dv.getUint8(o+3))}
@@ -486,11 +490,15 @@ function fitLimits(){
 }
 
 // ---------- persistence/export ----------
-function exportTracks(){
+function rawExportTracks(){
  const p=pdef();let a;if(!project.sourceDirty)a=splitTracks(project.mml).slice(0,p.fields);else a=splitTracks(serializeAllOptimized({globalTempo:true})).slice(0,p.fields);while(a.length<p.fields)a.push('');return a;
 }
+function exportTracks(){
+ const p=pdef(),a=rawExportTracks();if(!p.mobile)return a;
+ return a.map((raw,i)=>{const t=project.tracks[i];if(!raw.trim()||!t?.parseSafe)return raw;return project.sourceDirty||/(?:[a-gr]|l)\d*\.\./i.test(raw)?serializeTrackOptimized(t,i,{globalTempo:i===0}):raw});
+}
 function exportTrack(i){return exportTracks()[i]||'';}
-function exportMml(){return wrapTracks(exportTracks());}
+function exportMml(){return wrapTracks(rawExportTracks());}
 function renderTrackCopyButtons(){
  const host=$('#trackCopyButtons');if(!host)return;host.innerHTML='';const p=pdef(),a=exportTracks(),blocked=exportBlocked(),labels=['主旋律 Melody','和弦 1 Chord1','和弦 2 Chord2'],copyNames=['主旋律','和弦 1','和弦 2'];
  function addCard(container,i,label,copyName=label){const raw=a[i]||'',row=document.createElement('div');row.className='copytrack';const meta=document.createElement('div');meta.className='meta';meta.innerHTML=`<div class="name">${label}</div><div class="count">${compactLen(raw)} / ${p.limits[i]??2400} 字${raw.trim()?'':' · 空軌'}</div>`;const ta=document.createElement('textarea');ta.readOnly=true;ta.spellcheck=false;ta.value=raw;ta.setAttribute('aria-label',`${label} MML`);const b=document.createElement('button');b.className='btn';b.type='button';b.textContent=`📋 複製${copyName}`;b.disabled=blocked||!raw.trim();b.onclick=()=>guardExport(()=>{copyText(raw);toast(`已複製${label}`)});row.append(meta,ta,b);container.appendChild(row)}
@@ -511,7 +519,7 @@ function resetProject(){stopPlayback();project={profile:els.profile.value,tempo:
 $('#applyMml').onclick=()=>{parseMml(els.mml.value,{asSource:true});toast('已解析；原始 MML 完全保留')};
 $('#formatMml').onclick=formatText;$('#optimizeMml').onclick=optimizeText;$('#fitLimits').onclick=fitLimits;
 $('#loadDemo').onclick=()=>{els.mml.value=demoMml();parseMml(els.mml.value,{asSource:true});toast('已載入新手範例 ✨')};
-function loadSampleSong(){stopPlayback();project.profile='mobile';els.profile.value='mobile';project.meter='3/4';els.meter.value='3/4';project.tempo=140;els.tempo.value=140;ensureTracks(6);els.mml.value=SAMPLE_SONG_MML;parseMml(SAMPLE_SONG_MML,{asSource:true});view.beatOffset=0;renderAll();updateTime(0,songEndBeat());toast('已載入 Petzold《G 大調小步舞曲》手遊版')}
+function loadSampleSong(){stopPlayback();project.profile='mobile';els.profile.value='mobile';project.meter='3/4';els.meter.value='3/4';project.tempo=140;els.tempo.value=140;ensureTracks(6);els.mml.value=SAMPLE_SONG_MML;parseMml(SAMPLE_SONG_MML,{asSource:true});commitNotes('已載入 Petzold《G 大調小步舞曲》手遊版');view.beatOffset=0;renderAll();updateTime(0,songEndBeat());toast('已載入 Petzold《G 大調小步舞曲》手遊版')}
 function renderSongLibrary(filter=''){
  const host=$('#songLibrary');if(!host)return;const q=(filter||'').trim().toLowerCase();const songs=MUTOPIA_SONGS.filter(s=>[s.title,s.originalTitle,s.composer,s.opus,s.style,s.instrument].join(' ').toLowerCase().includes(q));host.innerHTML='';
  if(!songs.length){const empty=document.createElement('div');empty.className='library-empty';empty.textContent='找不到符合的曲目；試試作曲家、曲名或作品編號。';host.appendChild(empty)}

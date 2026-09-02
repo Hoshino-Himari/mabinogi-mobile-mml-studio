@@ -17,6 +17,7 @@
   https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=378
   https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=931
 - 超過 2400 字、使用第 7 軌或有阻擋語法錯誤時，會停用複製與下載，避免輸出不完整樂譜。
+- Mobile 分軌複製會自動避開 MIDI 常見的疊加附點（例如 `r1..`），改用遊戲相容的標準／單附點音長；原曲音符與拍長不變。
 - 手機版提供「樂譜／捲軸／設定輸出」三頁籤。
 - 鋼琴卷軸支援水平時間捲動、3/4 等拍號小節線與播放跟隨。
 - 修正 MIDI 匯入會因嚴格模式變數錯誤而失敗的問題。
