@@ -333,7 +333,7 @@ function buildPieces(track,index,{globalTempo=false}={}){
  function addSegment(type,start,dur,pitch=null,velocity=null,tieToNext=false){
   const boundaries=[...tempoMap.keys()].filter(b=>b>start+1e-6&&b<start+dur-1e-6).sort((a,b)=>a-b);let pts=[start,...boundaries,start+dur];
   for(let si=0;si<pts.length-1;si++){
-   let st=pts[si],du=pts[si+1]-st,codes=decomposeDuration(du);for(let ci=0;ci<codes.length;ci++)pieces.push({type,start:st,code:codes[ci],pitch,velocity,tempo:ci===0?tempoMap.get(Math.round(st*1e6)/1e6):null,tieAfter:type==='note'&&(ci<codes.length-1||si<pts.length-2||tieToNext)});
+   let st=pts[si],du=pts[si+1]-st,codes=decomposeDuration(du);for(let ci=0;ci<codes.length;ci++)pieces.push({type,start:st,code:codes[ci],pitch,velocity,tempo:ci===0?tempoMap.get(Math.round(st*1e6)/1e6):undefined,tieAfter:type==='note'&&(ci<codes.length-1||si<pts.length-2||tieToNext)});
   }
  }
  for(const n of ns){if(n.start<cur-1e-6)continue;let gap=n.start-cur;if(gap>1e-6)addSegment('rest',cur,gap);addSegment('note',n.start,n.dur,n.pitch,n.velocity,false);cur=n.start+n.dur;}
