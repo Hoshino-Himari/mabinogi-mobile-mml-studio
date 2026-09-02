@@ -132,14 +132,14 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
           <section class="settings-subsection">
             <div class="settings-subhead"><h3>樂曲設定</h3><span class="mini">即時套用</span></div>
             <div class="body inspector">
-              <div class="field"><label for="tempo">BPM</label><input id="tempo" type="number" min="20" max="300" value="120"></div>
+              <div class="field"><label for="tempo">BPM</label><input id="tempo" type="number" min="32" max="255" step="1" value="120"></div>
               <div class="field"><label for="meter">拍號</label><select id="meter"><option>4/4</option><option>3/4</option><option>6/8</option><option>2/4</option></select></div>
               <div class="field"><label for="trackVolume">目前音量</label><input id="trackVolume" type="range" min="0" max="15" value="12"></div>
               <div class="field"><label for="instrument">試聽音色</label><select id="instrument"><option value="triangle">合成器・鋼琴感</option><option value="sine">合成器・長笛感</option><option value="square">合成器・魯特琴感</option><option value="sawtooth">合成器・弦樂感</option><option value="soundbank">SF2 / DLS 音色庫</option></select></div>
               <div class="field"><label for="soundPreset">音色庫預設</label><select id="soundPreset"><option value="">尚未載入 SF2 / DLS</option></select></div>
               <div id="soundbankState" class="feature-note">可載入你合法持有的 SF2 / DLS。網頁不內附瑪奇遊戲音源；若載入與遊戲相同或相近的音色庫，試聽會比振盪器接近遊戲。</div>
               <div class="field"><label>目前軌道</label><div class="row"><button id="addTrack" class="btn">複製到空軌</button><button id="removeTrack" class="btn danger">清空軌</button><button id="muteTrack" class="btn">🔊</button></div></div>
-              <div class="hint">音色只是網頁試聽用，不會塞進遊戲 MML。拍號也主要用於編輯格線；匯出時以遊戲可接受的 MML 為準。</div>
+              <div class="hint">BPM 必須是整數 32–255；超出範圍的值不能直接貼回遊戲。音色只是網頁試聽用，不會塞進遊戲 MML。拍號也主要用於編輯格線；匯出時以遊戲可接受的 MML 為準。</div>
             </div>
           </section>
 
@@ -147,7 +147,7 @@ textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line
             <div class="settings-subhead"><h3>完整變速 Tempo Map</h3><button class="btn ghost" id="applyTempoMap">套用</button></div>
             <div class="body stack">
               <textarea id="tempoMapInput" class="tempo-editor" spellcheck="false" aria-label="Tempo Map"></textarea>
-              <div class="hint">格式：<code>0=120, 16=150, 32=90</code>，左邊是第幾拍、右邊是 BPM。MIDI / MusicXML 的中途變速會保留在這裡，試聽與重新輸出都會套用。</div>
+              <div class="hint">格式：<code>0=120, 16=150, 32=90</code>，左邊是第幾拍、右邊是 BPM（整數 32–255）。MIDI / MusicXML 的中途變速會保留在這裡，試聽與重新輸出都會套用。</div>
             </div>
           </section>
         </div>
@@ -224,7 +224,7 @@ const PROFILES={
  pcx:{name:'PC Rank 1 排除歌曲',playTracks:3,fields:4,limits:[1600,1200,900,null],mobile:false,songIndex:3},
  mobile:{name:'Mobile 6 軌',playTracks:6,fields:6,limits:[2400,2400,2400,2400,2400,2400],mobile:true,songIndex:null}
 };
-const DEFAULT_VOLUME=8;
+const DEFAULT_VOLUME=8,TEMPO_MIN=32,TEMPO_MAX=255;
 let project={profile:'mobile',tempo:120,tempoMap:[{beat:0,bpm:120}],meter:'4/4',tracks:[],mml:'',originalText:'',sourceDirty:false,updated:Date.now()};
 let activeTrack=0, view={minPitch:36,maxPitch:84,beatOffset:0,zoom:1}, play={ctx:null,nodes:[],raf:0,startAudio:0,startBeat:0,endBeat:0,running:false,currentBeat:0},pointer={mode:null,note:null,startX:0,startY:0,orig:null};
 const SAMPLE_SONG_MML='MML@t140v11<g2a4l2.b>c<bagl4>d<bg>d<d8>c8<b8a8b2agbg>c2.<b>c8<b8a8g8a2f+g2b>cd<dg2<g>g2.f+2.egea2<a>a2.b>dc+d<f+a>d<d>c<b2b>c2c<bag>d2a<d2.egf+g<b>dgd<g,v11<b2>b8>c8l4d<gg>ec8d8e8f+8g<gg>cl8dc<bab4>c<bagf+4gabga2.>d4<gab>cd4<g4g4>e4cdef+g4<g4g4>c4dc<bab4>c<baga4bagf+g2.>b4gabga4def+dg4ef+gdc+4<b>c+<a4ab>c+def+l4gf+ef+<a>c+d2.d<d2>e<e2>dc<bl8agf+gr4def+gl4<f+>>c<bab8>d8<gf+<b2.,v11d2l1..rrr4r1b16rrrrrrrr8.r2l8gf+g4r4gf+g4r1..r4abr1.d2.,v11>d4<g8a8l1..rrrrrrrrrrrrrg2.,,;';
@@ -287,8 +287,11 @@ function parseTrack(raw,index){
  }
  return {notes,tempos,issues,endBeat:beat,safe};
 }
+function normalizeBpm(value,fallback=120){const n=Number(value);return Number.isFinite(n)?Math.round(n):fallback}
+function clampBpm(value){return Math.max(TEMPO_MIN,Math.min(TEMPO_MAX,normalizeBpm(value)))}
+function validBpm(value){return Number.isInteger(Number(value))&&Number(value)>=TEMPO_MIN&&Number(value)<=TEMPO_MAX}
 function normalizeTempoMap(events,base=120){
- const a=(events||[]).filter(x=>Number.isFinite(+x.beat)&&Number.isFinite(+x.bpm)&&+x.bpm>0).map(x=>({beat:Math.max(0,+x.beat),bpm:+x.bpm})).sort((a,b)=>a.beat-b.beat);
+ const a=(events||[]).filter(x=>Number.isFinite(+x.beat)&&Number.isFinite(+x.bpm)&&+x.bpm>0).map(x=>({beat:Math.max(0,+x.beat),bpm:normalizeBpm(x.bpm)})).sort((a,b)=>a.beat-b.beat);
  const out=[];for(const e of a){if(out.length&&nearly(out[out.length-1].beat,e.beat))out[out.length-1]=e;else out.push(e)}
  if(!out.length||out[0].beat>0)out.unshift({beat:0,bpm:base||120});else if(out[0].beat===0)base=out[0].bpm;
  return out;
@@ -339,20 +342,22 @@ function buildPieces(track,index,{globalTempo=false}={}){
 }
 function serializeTrackOptimized(track,index,{globalTempo=false}={}){
  const pieces=buildPieces(track,index,{globalTempo});if(!pieces.length)return '';
+ const tempoEvents=globalTempo&&index===0?project.tempoMap:(track.tempoEvents||[]),initialTempo=tempoAtBeatCommands(tempoEvents).get(0);
+ const movedTempo=new Set();for(let i=0;i<pieces.length-1;i++)if(pieces[i].tieAfter&&pieces[i+1].tempo!==undefined)movedTempo.add(i+1);
  let curOct=4,curV=DEFAULT_VOLUME;const common=[];
- for(const p of pieces){let pre='';if(p.tempo)pre+='t'+p.tempo;if(p.type==='note'){
+ for(let i=0;i<pieces.length;i++){const p=pieces[i];let pre='';if(p.tempo&&!movedTempo.has(i)&&!(p.start===0&&initialTempo!==undefined))pre+='t'+p.tempo;if(p.type==='note'){
    let v=Math.max(0,Math.min(15,Math.round(p.velocity??track.volume??DEFAULT_VOLUME)));if(v!==curV){pre+='v'+v;curV=v}
    const pp=tokenForPitch(p.pitch);pre+=octaveCmd(curOct,pp.oct);curOct=pp.oct;pre+=pp.note;
-  }else pre+='r';common.push({pre,code:p.code,tie:p.tieAfter?'&':''});
+  }else pre+='r';common.push({pre,code:p.code,post:p.tieAfter&&pieces[i+1]?.tempo!==undefined?'t'+pieces[i+1].tempo:'',tie:p.tieAfter?'&':''});
  }
  const lens=[...new Set(common.map(x=>x.code))],states=['',...lens],N=common.length,INF=1e15,dp=Array.from({length:N+1},()=>Array(states.length).fill(INF)),choice=Array.from({length:N},()=>Array(states.length).fill(null));for(let si=0;si<states.length;si++)dp[N][si]=0;
  for(let i=N-1;i>=0;i--){const x=common[i];for(let si=0;si<states.length;si++){
-   const curL=states[si];let best=x.pre.length+x.code.length+x.tie.length+dp[i+1][si],ch={next:si,text:x.pre+x.code+x.tie};
-   if(curL===x.code){let c=x.pre.length+x.tie.length+dp[i+1][si];if(c<best){best=c;ch={next:si,text:x.pre+x.tie}}}
-   let ni=states.indexOf(x.code),txt='l'+x.code+x.pre+x.tie,c=txt.length+dp[i+1][ni];if(c<best){best=c;ch={next:ni,text:txt}}
+   const curL=states[si];let best=x.pre.length+x.code.length+x.post.length+x.tie.length+dp[i+1][si],ch={next:si,text:x.pre+x.code+x.post+x.tie};
+   if(curL===x.code){let c=x.pre.length+x.post.length+x.tie.length+dp[i+1][si];if(c<best){best=c;ch={next:si,text:x.pre+x.post+x.tie}}}
+   let ni=states.indexOf(x.code),txt='l'+x.code+x.pre+x.post+x.tie,c=txt.length+dp[i+1][ni];if(c<best){best=c;ch={next:ni,text:txt}}
    dp[i][si]=best;choice[i][si]=ch;
  }}
- let si=0,out='';for(let i=0;i<N;i++){const ch=choice[i][si];out+=ch.text;si=ch.next}return out;
+ let si=0,out='';for(let i=0;i<N;i++){const ch=choice[i][si];out+=ch.text;si=ch.next}return initialTempo!==undefined?'t'+initialTempo+out:out;
 }
 function serializeAllOptimized({globalTempo=true}={}){const p=pdef(),tracks=[];for(let i=0;i<p.fields;i++)tracks.push(serializeTrackOptimized(project.tracks[i],i,{globalTempo}));return wrapTracks(tracks);}
 function commitNotes(reason='已修改音符'){project.mml=serializeAllOptimized({globalTempo:true});els.mml.value=project.mml;const raws=splitTracks(project.mml);project.tracks.forEach((t,i)=>{t.raw=raws[i]||'';t.tempoEvents=i===0?project.tempoMap.map(x=>({...x,track:0})):[]});setSourceState(true,`${reason}：已切換成最佳化輸出模式。`);updateValidation();syncTempoMapUI();scheduleSave();}
@@ -400,7 +405,7 @@ function rollDouble(e){const r=els.roll.getBoundingClientRect(),x=e.clientX-r.le
 // ---------- rendering/validation ----------
 function renderTracks(){const p=pdef();ensureTracks(p.fields);els.trackbar.innerHTML='';project.tracks.forEach((t,i)=>{let b=document.createElement('button');b.className='trackbtn'+(i===activeTrack?' active':'');b.innerHTML=`<span class="dot"></span>${t.name}${t.mute?' · 靜音':''}`;b.onclick=()=>{activeTrack=i;renderTracks();syncInspector();drawRoll()};els.trackbar.appendChild(b)});$('#activeTrackTag').textContent=`Track ${activeTrack+1} · ${project.tracks[activeTrack].name}`;syncInspector()}
 function syncInspector(){let t=project.tracks[activeTrack];if(!t)return;els.vol.value=t.volume;els.instrument.value=t.instrument==='soundbank'&&soundBank?'soundbank':t.instrument;$('#muteTrack').textContent=t.mute?'🔇':'🔊'}
-function validate(extra=[]){const p=pdef(),out=[...extra],rawCount=splitTracks(project.mml||els.mml.value).length;if(rawCount>p.fields)out.push({type:'error',msg:`目前有 ${rawCount} 個欄位，${p.name} 最多 ${p.fields} 軌`,detail:'請先刪除或重新分配多出的軌道，匯出不會靜默裁切。'});project.tracks.forEach((t,i)=>{let raw=currentRaw(i),n=compactLen(raw),limit=p.limits[i];if(!t.parseSafe)out.push({type:'error',track:i,msg:'含有無法安全解析的語法',detail:'請依解析錯誤修正後再匯出。'});if(limit&&n>limit)out.push({type:'error',track:i,msg:`字數超過上限：${n} / ${limit}`,detail:'先按「無損精簡」；若仍超過，再主動使用「智慧壓到字數限制」。'});if(/[\[\]]/.test(raw))out.push({type:'error',track:i,msg:'偵測到 [ ] 和弦擴充語法',detail:'遊戲原生聲部是單音軌，請使用智慧拆軌。'});let vs=[...raw.matchAll(/v(\d+)/ig)].map(m=>+m[1]);if(vs.some(v=>v<0||v>15))out.push({type:'error',track:i,msg:'音量 v 超出 0–15',detail:'請調回遊戲可接受範圍。'});if(p.mobile){let os=[...raw.matchAll(/o(\d+)/ig)].map(m=>+m[1]);if(os.some(o=>o<1||o>7))out.push({type:'warn',track:i,msg:'Mobile 八度可能超出 o1–o7',detail:'請以你的遊戲版本實測。'});if(/(?:[a-gr]|l)\d*\.\./i.test(raw))out.push({type:'warn',track:i,msg:'Mobile 原文含有疊加附點',detail:'手遊輸出會自動改用單附點／標準音長，避免遊戲回報 MML 錯誤。'})}let ns=[...t.notes].sort((a,b)=>a.start-b.start);for(let j=1;j<ns.length;j++)if(ns[j].start<ns[j-1].start+ns[j-1].dur-1e-6){out.push({type:'error',track:i,msg:'同一軌有重疊音符',detail:'MML 單軌不能同時發兩音；請用智慧拆軌。'});break}});for(const te of project.tempoMap||[])if(te.bpm<32||te.bpm>255)out.push({type:'warn',msg:`Tempo Map 在第 ${trimNum(te.beat)} 拍有 BPM ${te.bpm}`,detail:'超出常見 t32–t255 範圍，請進遊戲實測或調整。'});if(project.sourceDirty)out.push({type:'warn',msg:'目前是「編輯後最佳化輸出」',detail:'你已改過鋼琴卷軸、速度或其他會改寫 MML 的內容；原始貼入文字仍留在專案 originalText。'});return out}
+function validate(extra=[]){const p=pdef(),out=[...extra],rawCount=splitTracks(project.mml||els.mml.value).length;if(rawCount>p.fields)out.push({type:'error',msg:`目前有 ${rawCount} 個欄位，${p.name} 最多 ${p.fields} 軌`,detail:'請先刪除或重新分配多出的軌道，匯出不會靜默裁切。'});project.tracks.forEach((t,i)=>{let raw=currentRaw(i),n=compactLen(raw),limit=p.limits[i];if(!t.parseSafe)out.push({type:'error',track:i,msg:'含有無法安全解析的語法',detail:'請依解析錯誤修正後再匯出。'});if(limit&&n>limit)out.push({type:'error',track:i,msg:`字數超過上限：${n} / ${limit}`,detail:'先按「無損精簡」；若仍超過，再主動使用「智慧壓到字數限制」。'});if(/[\[\]]/.test(raw))out.push({type:'error',track:i,msg:'偵測到 [ ] 和弦擴充語法',detail:'遊戲原生聲部是單音軌，請使用智慧拆軌。'});let vs=[...raw.matchAll(/v(\d+)/ig)].map(m=>+m[1]);if(vs.some(v=>v<0||v>15))out.push({type:'error',track:i,msg:'音量 v 超出 0–15',detail:'請調回遊戲可接受範圍。'});let ts=[...raw.matchAll(/[tT](\d+(?:\.\d+)?)/g)].map(m=>+m[1]);let badTempo=ts.find(v=>!validBpm(v));if(badTempo!==undefined)out.push({type:'error',track:i,msg:`BPM ${badTempo} 不在 ${TEMPO_MIN}–${TEMPO_MAX} 的遊戲範圍`,detail:'請把 t 指令改成 32–255 的整數；目前已停用複製，避免遊戲顯示錯誤。'});if(p.mobile){let os=[...raw.matchAll(/o(\d+)/ig)].map(m=>+m[1]);if(os.some(o=>o<1||o>7))out.push({type:'warn',track:i,msg:'Mobile 八度可能超出 o1–o7',detail:'請以你的遊戲版本實測。'});if(/(?:[a-gr]|l)\d*\.\./i.test(raw))out.push({type:'warn',track:i,msg:'Mobile 原文含有疊加附點',detail:'手遊輸出會自動改用單附點／標準音長，避免遊戲回報 MML 錯誤。'})}let ns=[...t.notes].sort((a,b)=>a.start-b.start);for(let j=1;j<ns.length;j++)if(ns[j].start<ns[j-1].start+ns[j-1].dur-1e-6){out.push({type:'error',track:i,msg:'同一軌有重疊音符',detail:'MML 單軌不能同時發兩音；請用智慧拆軌。'});break}});for(const te of project.tempoMap||[])if(!validBpm(te.bpm))out.push({type:'error',msg:`Tempo Map 在第 ${trimNum(te.beat)} 拍有 BPM ${te.bpm}`,detail:`BPM 必須是 ${TEMPO_MIN}–${TEMPO_MAX} 的整數，否則遊戲可能拒絕這份 MML。`});if(project.sourceDirty)out.push({type:'warn',msg:'目前是「編輯後最佳化輸出」',detail:'你已改過鋼琴卷軸、速度或其他會改寫 MML 的內容；原始貼入文字仍留在專案 originalText。'});return out}
 function exportBlocked(){return validate().some(x=>x.type==='error')}
 function guardExport(action){if(exportBlocked()){updateValidation();document.querySelector('#issues')?.scrollIntoView({behavior:'smooth',block:'center'});toast('有阻擋錯誤，修正後才能複製或下載');return}action()}
 function updateValidation(extra=[]){const list=validate(extra);els.issues.innerHTML='';if(!list.length){els.issues.innerHTML='<div class="issue ok"><b>✓ 目前沒有偵測到阻擋匯出的問題</b><div>仍建議進遊戲實測音色與版本相容性。</div></div>';return}for(const x of list){let d=document.createElement('div');d.className='issue '+(x.type==='error'?'error':'');d.innerHTML=`<b>${x.type==='error'?'⛔':'⚠️'} ${x.track!=null?'Track '+(x.track+1)+' · ':''}${x.msg}</b><div>${x.detail||'請檢查後再匯出。'}</div>`;els.issues.appendChild(d)}}
@@ -561,7 +566,7 @@ const songSearch=$('#songSearch');if(songSearch)songSearch.oninput=()=>renderSon
 document.querySelectorAll('.page-tab').forEach(tab=>tab.addEventListener('click',()=>setPage(tab.dataset.page)));setPage('editor');
 $('#newProject').onclick=()=>{if(confirm('建立新的空白樂譜？目前專案會被新的自動存檔取代。'))resetProject()};
 els.profile.onchange=e=>applyProfile(e.target.value);
-els.tempo.onchange=e=>{let bpm=Math.max(20,Math.min(300,+e.target.value||120));project.tempo=bpm;project.tempoMap=normalizeTempoMap([{beat:0,bpm},...(project.tempoMap||[]).filter(x=>x.beat>0)],bpm);commitNotes('已修改起始 BPM');renderAll()};
+els.tempo.onchange=e=>{const entered=Number(e.target.value),bpm=clampBpm(Number.isFinite(entered)?entered:120);if(Number.isFinite(entered)&&entered!==bpm)toast(`BPM 已調整為 ${bpm}（遊戲範圍 ${TEMPO_MIN}–${TEMPO_MAX}）`);e.target.value=bpm;project.tempo=bpm;project.tempoMap=normalizeTempoMap([{beat:0,bpm},...(project.tempoMap||[]).filter(x=>x.beat>0)],bpm);commitNotes('已修改起始 BPM');renderAll()};
 els.meter.onchange=e=>{project.meter=e.target.value;scheduleSave();drawRoll()};els.grid.onchange=drawRoll;els.zoom.oninput=e=>{view.zoom=+e.target.value;drawRoll()};
 els.vol.oninput=e=>{let t=project.tracks[activeTrack];t.volume=+e.target.value;t.notes.forEach(n=>n.velocity=t.volume);commitNotes('已修改音量')};
 els.instrument.onchange=e=>{project.tracks[activeTrack].instrument=e.target.value;scheduleSave()};
@@ -569,7 +574,7 @@ $('#muteTrack').onclick=()=>{let t=project.tracks[activeTrack];t.mute=!t.mute;re
 $('#addTrack').onclick=()=>{let src=project.tracks[activeTrack],idx=project.tracks.findIndex((t,i)=>i!==activeTrack&&t.notes.length===0);if(idx<0){toast('目前沒有空軌可複製');return}project.tracks[idx].notes=src.notes.map(n=>({...n}));project.tracks[idx].volume=src.volume;activeTrack=idx;commitNotes(`已複製到 Track ${idx+1}`);renderAll()};
 $('#removeTrack').onclick=()=>{project.tracks[activeTrack].notes=[];project.tracks[activeTrack].raw='';commitNotes(`Track ${activeTrack+1} 已清空`);renderAll()};
 $('#recheck').onclick=()=>{parseMml(els.mml.value,{asSource:true});toast('已重新檢查；沒有改寫原文')};
-$('#applyTempoMap').onclick=()=>{try{project.tempoMap=parseTempoMapText(els.tempoMap.value);project.tempo=project.tempoMap[0].bpm;els.tempo.value=Math.round(project.tempo);commitNotes('已套用完整 Tempo Map');renderAll();toast('Tempo Map 已套用')}catch(err){toast(err.message)}};
+$('#applyTempoMap').onclick=()=>{try{const next=parseTempoMapText(els.tempoMap.value),bad=next.find(x=>!validBpm(x.bpm));if(bad)throw new Error(`BPM 必須是 ${TEMPO_MIN}–${TEMPO_MAX} 的整數（第 ${trimNum(bad.beat)} 拍目前為 ${bad.bpm}）`);project.tempoMap=next;project.tempo=project.tempoMap[0].bpm;els.tempo.value=Math.round(project.tempo);commitNotes('已套用完整 Tempo Map');renderAll();toast('Tempo Map 已套用')}catch(err){toast(err.message)}};
 $('#downloadProject').onclick=()=>download('mabinogi-project-v3.json',JSON.stringify(project,null,2),'application/json');
 $('#play').onclick=startPlayback;$('#stop').onclick=stopPlayback;els.pos.oninput=()=>{const desired=+els.pos.value;if(play.running)stopPlayback();els.pos.value=desired;let beat=(desired/1000)*songEndBeat();updateTime(beat,songEndBeat());play.currentBeat=beat;drawRoll()};
 $('#timelineScroll').oninput=e=>{view.beatOffset=+e.target.value;drawRoll()};
